@@ -9,19 +9,28 @@ export interface PredictionResult {
 }
 
 let session: ort.InferenceSession | null = null;
+let loadingPromise: Promise<void> | null = null;
 
 export async function loadModel() {
   if (session) return;
-  try {
-    ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.25.1/dist/";
-    session = await ort.InferenceSession.create(MODEL_CONFIG.modelPath, {
-      executionProviders: ['wasm']
-    });
-    console.log("ONNX Model loaded successfully.");
-  } catch (e) {
-    console.error("Failed to load ONNX model", e);
-    throw e;
-  }
+  if (loadingPromise) return loadingPromise;
+  
+  loadingPromise = (async () => {
+    try {
+      ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.25.1/dist/";
+      session = await ort.InferenceSession.create(MODEL_CONFIG.modelPath, {
+        executionProviders: ['wasm']
+      });
+      console.log("ONNX Model loaded successfully.");
+    } catch (e) {
+      console.error("Failed to load ONNX model", e);
+      throw e;
+    } finally {
+      loadingPromise = null;
+    }
+  })();
+  
+  return loadingPromise;
 }
 
 function softmax(arr: Float32Array): number[] {
