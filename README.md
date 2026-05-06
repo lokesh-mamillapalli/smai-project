@@ -1,6 +1,6 @@
 # Handwritten Kannada Digit Recognizer
 
-This repository contains the front-end application for the **Handwritten Indic Script Recognition** project (Topic T3). It is a modern React-based web app that uses a custom-trained CNN to classify Kannada handwritten digits (0-9) entirely within the user's browser.
+This repository contains the front-end application for the **Handwritten Indic Script Recognition** project (Topic T3). It is a modern React-based web app that uses a custom-trained CNN (`code.ipynb`) to classify Kannada handwritten digits (0-9) entirely within the user's browser.
 
 ## Features
 - **Live Canvas Drawing:** Draw a Kannada digit using your mouse or touch device and receive an instant prediction with zero network latency.
