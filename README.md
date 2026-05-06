@@ -36,16 +36,6 @@ To get started with the frontend:
 
 4. Open your browser and navigate to the local URL provided by Vite (usually `http://localhost:5173`).
 
-## 2. Model Training (Optional)
-
-If you want to retrain the CNN model or see how it was built, you can run the provided Python script.
-
-1. Navigate to the `files` directory:
-   ```bash
-   cd files
-   ```
-2
-
 ## Tech Stack
 
 - **Model:** PyTorch, ONNX
