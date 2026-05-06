@@ -12,9 +12,12 @@ export interface DrawingCanvasHandle {
 
 interface Props {
   onChange?: () => void;
+  guideTarget?: number | null;
 }
 
-export const DrawingCanvas = forwardRef<DrawingCanvasHandle, Props>(({ onChange }, ref) => {
+const KANNADA_DIGITS = ['೦', '೧', '೨', '೩', '೪', '೫', '೬', '೭', '೮', '೯'];
+
+export const DrawingCanvas = forwardRef<DrawingCanvasHandle, Props>(({ onChange, guideTarget }, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const drawingRef = useRef(false);
   const lastRef = useRef<{ x: number; y: number } | null>(null);
@@ -83,7 +86,7 @@ export const DrawingCanvas = forwardRef<DrawingCanvasHandle, Props>(({ onChange 
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded-2xl bg-gradient-soft p-3 shadow-soft">
+      <div className="relative rounded-2xl bg-gradient-soft p-3 shadow-soft">
         <canvas
           ref={canvasRef}
           width={280}
@@ -95,6 +98,13 @@ export const DrawingCanvas = forwardRef<DrawingCanvasHandle, Props>(({ onChange 
           className="aspect-square w-full touch-none rounded-xl bg-white shadow-inner"
           style={{ cursor: "crosshair" }}
         />
+        {guideTarget !== undefined && guideTarget !== null && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <span className="select-none text-[12rem] font-bold text-foreground/10">
+              {KANNADA_DIGITS[guideTarget]}
+            </span>
+          </div>
+        )}
       </div>
       <div className="flex items-center gap-4">
         <div className="flex-1">

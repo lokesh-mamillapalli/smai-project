@@ -228,7 +228,7 @@ function HomePage() {
               </TabsList>
 
               <TabsContent value="draw" className="mt-5">
-                <DrawingCanvas ref={canvasRef} onChange={() => setPracticeFeedback(null)} />
+                <DrawingCanvas ref={canvasRef} onChange={() => setPracticeFeedback(null)} guideTarget={practiceTarget} />
               </TabsContent>
 
               <TabsContent value="upload" className="mt-5">
