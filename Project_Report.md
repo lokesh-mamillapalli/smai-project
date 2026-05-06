@@ -1,10 +1,13 @@
 # Final Project Report: Handwritten Indic Script Recognition (Kannada MNIST)
 
 **Team Members:** 
+- Lokesh Mamillapalli, 2023101115, lokesh.mamillapalli@students.iiit.ac.in
+- Mannem Bheema siddartha, 2023101009, mannem.siddartha@students.iiit.ac.in
+- Chaitanya Thogata, 2023113018, chaitanya.thogata@research.iiit.ac.in
 - [Name 1], [Roll Number 1], [Email 1]
 - [Name 2], [Roll Number 2], [Email 2]
 
-**GitHub Repository:** [Insert Link Here]
+**GitHub Repository:** https://github.com/lokesh-mamillapalli/smai-project
 
 ---
 
@@ -17,29 +20,30 @@ This technology has profound implications for:
 - **Accessibility:** Providing alternative, localized input methods for users across India.
 
 ## 2. Dataset and Preprocessing
-We utilized the Kaggle **Kannada-MNIST** dataset. To ensure a robust model, we combined the primary `train.csv` and the supplementary `Dig-MNIST.csv` datasets, resulting in approximately 70,000 training samples.
+We utilized the Kaggle **Kannada-MNIST** dataset. To ensure a robust model, the primary `train.csv` resulting in approximately 65,000 training samples.
 
-- **Data Split:** A 90/10 split was applied to separate the dataset into training and validation sets.
-- **Preprocessing:** Pixel values were normalized to the `[0, 1]` range and reshaped to `1x28x28` tensors.
-- **Augmentation:** To prevent overfitting and improve generalization on real-world canvas drawings, we utilized dynamic data augmentation including:
-  - `RandomAffine` (rotation up to 10 degrees, slight scaling and translation)
-  - `RandomErasing` (to simulate broken strokes or noise)
+- **Data Split:** An 80/20 split was applied to separate the 60,000 training samples into training and validation sets.
+- **Preprocessing:** Pixel values were normalized to the `[0, 1]` range and reshaped to `(28, 28, 1)` tensors.
+- **Augmentation:** To prevent overfitting and improve generalization on real-world canvas drawings, we utilized on-the-fly data augmentation using TensorFlow's `ImageDataGenerator`, including:
+  - Rotation (up to 10 degrees)
+  - Width and Height shifts (10%)
+  - Shear and Zoom transformations (10%)
 
 ## 3. Model Architecture
-We designed a lightweight, highly efficient 3-layer CNN (~300k parameters) built entirely from scratch using PyTorch. No transfer learning was required.
+We designed a lightweight, highly efficient 3-block CNN (~300k parameters) built entirely from scratch using TensorFlow/Keras. No transfer learning was required.
 
 **Architecture Details:**
-1. **Conv Block 1:** `Conv2d(1 -> 32, kernel=3, padding=1)` → `BatchNorm2d` → `ReLU` → `MaxPool2d(2)`
-2. **Conv Block 2:** `Conv2d(32 -> 64, kernel=3, padding=1)` → `BatchNorm2d` → `ReLU` → `MaxPool2d(2)`
-3. **Conv Block 3:** `Conv2d(64 -> 128, kernel=3, padding=1)` → `BatchNorm2d` → `ReLU` → `AdaptiveAvgPool2d(3)`
-4. **Classifier Head:** `Flatten` → `Dropout(0.3)` → `Linear(128*3*3 -> 256)` → `ReLU` → `Linear(256 -> 10)`
+1. **Conv Block 1:** `Conv2D(32, 3x3)` → `BatchNorm` → `ReLU` → `Conv2D(32, 3x3)` → `BatchNorm` → `ReLU` → `MaxPool2D(2)` → `Dropout(0.25)`
+2. **Conv Block 2:** `Conv2D(64, 3x3)` → `BatchNorm` → `ReLU` → `Conv2D(64, 3x3)` → `BatchNorm` → `ReLU` → `MaxPool2D(2)` → `Dropout(0.25)`
+3. **Conv Block 3:** `Conv2D(128, 3x3)` → `BatchNorm` → `ReLU` → `MaxPool2D(2)` → `Dropout(0.25)`
+4. **Classifier Head:** `Flatten` → `Dense(128)` → `BatchNorm` → `ReLU` → `Dropout(0.5)` → `Dense(10, Softmax)`
 
 ## 4. Training Methodology
-The model was trained on a Kaggle T4 GPU, reaching state-of-the-art accuracy (>97%) in under 5 minutes.
-- **Optimizer:** `AdamW` (LR = 3e-3, Weight Decay = 1e-4)
-- **Scheduler:** `OneCycleLR` to dynamically adjust learning rates, accelerating convergence.
-- **Loss Function:** `CrossEntropyLoss` with label smoothing (0.05) to penalize overconfidence.
-- **Export:** The best model state was exported to the ONNX format (`kannada_cnn.onnx`) with dynamic batching to allow cross-platform inference in the browser.
+The model was trained on a Kaggle T4 GPU, reaching high accuracy (>97%) in under 5 minutes.
+- **Optimizer:** `Adam` (Learning Rate = 1e-3)
+- **Callbacks:** `ReduceLROnPlateau` (to dynamically reduce LR on validation plateaus) and `EarlyStopping` (patience of 10 epochs, restoring best weights) to accelerate convergence and prevent overfitting.
+- **Loss Function:** `categorical_crossentropy` to handle the one-hot encoded multi-class distributions.
+- **Export:** The model function trace was converted to the ONNX format (`kannada_cnn.onnx`) using `tf2onnx` to allow cross-platform inference natively in the browser.
 
 ## 5. Web Application Integration
 Instead of a standard Streamlit app, we elevated the user experience by building a **modern React application** using Vite, Tailwind CSS, and TanStack Router. This allows the model to run *entirely client-side* via `onnxruntime-web` and `TensorFlow.js`, eliminating server latency and drastically improving privacy and speed.
