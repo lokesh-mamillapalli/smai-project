@@ -4,8 +4,6 @@
 - Lokesh Mamillapalli, 2023101115, lokesh.mamillapalli@students.iiit.ac.in
 - Mannem Bheema siddartha, 2023101009, mannem.siddartha@students.iiit.ac.in
 - Chaitanya Thogata, 2023113018, chaitanya.thogata@research.iiit.ac.in
-- [Name 1], [Roll Number 1], [Email 1]
-- [Name 2], [Roll Number 2], [Email 2]
 
 **GitHub Repository:** https://github.com/lokesh-mamillapalli/smai-project
 
